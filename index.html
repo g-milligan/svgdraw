@@ -1,0 +1,31 @@
+<html>
+<head>
+
+  <title>SVG Draw Demo</title>
+
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="css/styles.css" />
+  <script type="text/javascript" src="js/svgdraw.js"></script>
+
+</head>
+<body>
+
+  <div id="canvas"></div>
+  <div id="toolbar"></div>
+
+  <script type="text/javascript">
+    jQuery(document).ready(function(){
+
+      var workspace = svgDraw.init({
+        setinto:{
+          canvas:'#canvas',
+          toolbar:'#toolbar'
+        }
+      });
+
+    });
+  </script>
+
+</body>
+</html>
