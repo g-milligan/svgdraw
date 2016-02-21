@@ -42,7 +42,7 @@ var svgDraw = (function () {
         toolsContent.hover(
           function(){
             jQuery(this).addClass('over');
-          },function(){ 
+          },function(){
             jQuery(this).removeClass('over');
           });
         //open/close tool bar
@@ -83,6 +83,7 @@ var svgDraw = (function () {
                   toolArgs['onactivate']();
                 }
               }
+              setintoCanvas.attr('tool',toolArgs['name']);
               jQuery(this).removeClass('down');
             });
           } return toolBtn;
@@ -104,6 +105,89 @@ var svgDraw = (function () {
 
           }
         });
+        //get the active tool function
+        var getActiveTool=function(){ return toolsWrap.children('.svgdraw-tool.active:first'); };
+        //handle doing something depending on which tool is active
+        var toolAction=function(e, actionArgs){
+          var actionReturn;
+          if(actionArgs!=undefined){
+            var toolBtn=getActiveTool();
+            var activeToolName=toolBtn.attr('name');
+            if(actionArgs.hasOwnProperty('before')){
+              actionArgs['before'](e, toolBtn); //before action
+            }
+            if(actionArgs.hasOwnProperty(activeToolName)){
+              actionReturn=actionArgs[activeToolName](e, toolBtn); //call handler for this specific active tool
+            }
+            if(actionArgs.hasOwnProperty('before')){
+              actionArgs['after'](e, toolBtn); //after action
+            }
+          } return actionReturn;
+        };
+        //create the canvas controls
+        var ctlInEvents=function(input, ctlArgs){
+          var getCtlArg=function(ca,dft){ var cv; if(ctlArgs.hasOwnProperty(ca)){ cv=ctlArgs[ca]; }else{ cv=dft; } return cv; };
+          var ctlType=getCtlArg('type','number');
+          switch(ctlType){
+            case 'number':
+              var min=getCtlArg('min',0); var max=getCtlArg('max',9000);
+              var numberUp=function(i){
+
+              };
+              var numberDown=function(i){
+                
+              };
+              input.keydown(function(e){
+                switch(e.keyCode){
+                  case 38: //up key
+                    e.preventDefault(); numberUp(jQuery(this)); break;
+                  case 40: //down key
+                    e.preventDefault(); numberDown(jQuery(this)); break;
+                  case 13: //enter key
+                    if(ctlArgs.hasOwnProperty('onset')){
+                      e.preventDefault(); ctlArgs['onset']();
+                    } jQuery(this).removeClass('edit');
+                    break;
+                }
+              });
+              break;
+          }
+          input.keypress(function(e){
+            jQuery(this).addClass('edit');
+          });
+          input.blur(function(e){
+            if(ctlArgs.hasOwnProperty('onset')){
+              e.preventDefault(); ctlArgs['onset']();
+            } jQuery(this).removeClass('edit');
+          });
+        };
+        setintoCanvas.append('<div class="canvas-controls"></div>');
+        var canvasCtls=setintoCanvas.children('.canvas-controls:first');
+        canvasCtls.append('<div class="cursor-coords"><span class="x"></span><span class="y"></span></div>');
+        canvasCtls.append('<div class="viewbox"><span class="min-x"><input type="text" value="0" /></span><span class="min-y"><input type="text" value="0" /></span><span class="width"><input type="text" value="600" /></span><span class="height"><input type="text" value="600" /></span></div>');
+        canvasCtls.append('<div class="preserveaspectratio"><input type="text" /></div>');
+        canvasCtls.append('<div class="zoom"><input type="text" value="100" /></div>');
+        var viewboxCtl=canvasCtls.children('.viewbox:first');
+        var minXInput=viewboxCtl.find('.min-x input:first');
+        var minYInput=viewboxCtl.find('.min-y input:first');
+        var widthInput=viewboxCtl.find('.width input:first');
+        var heightInput=viewboxCtl.find('.height input:first');
+        ctlInEvents(minXInput,{type:'number',min:0,max:9000,onset:function(){
+
+        }}); //viewbox
+        ctlInEvents(minYInput,{type:'number',min:0,max:9000,onset:function(){
+
+        }}); //viewbox
+        ctlInEvents(widthInput,{type:'number',min:0,max:9000,onset:function(){
+
+        }}); //viewbox
+        ctlInEvents(heightInput,{type:'number',min:0,max:9000,onset:function(){
+
+        }}); //viewbox
+        var zoomInput=canvasCtls.find('.zoom input:first');
+        ctlInEvents(zoomInput,{type:'number',min:0,max:100,onset:function(){
+
+        }}); //zoom
         //create first layer
         setintoCanvas.append('<div class="svgdraw-layers"></div>');
         var layersWrap=setintoCanvas.children('.svgdraw-layers:first');
@@ -111,6 +195,17 @@ var svgDraw = (function () {
         var initCanvas=function(theCanvas){
           if(theCanvas.length>0 && !theCanvas.hasClass('init')){
             theCanvas.addClass('init');
+            //click canvas event
+            theCanvas.click(function(e){
+              toolAction({
+                point:function(e, btn){
+
+                },
+                select:function(e, btn){
+
+                }
+              });
+            });
             //***
           }
         };
@@ -127,7 +222,7 @@ var svgDraw = (function () {
             //create brand new layer
             layersWrap.append('<div class="svgdraw-layer"></div>');
             newLayer=layersWrap.children('.svgdraw-layer:last');
-            newLayer.append('<div class="workspace"><div class="view"><canvas>Sad canvas :(</canvas></div></div>');
+            newLayer.append('<div class="workspace"><div class="view"><div class="svg"><svg></svg></div><canvas>Sad canvas :(</canvas></div></div>');
             newLayer.append('<div class="x-ruler"></div><div class="y-ruler"></div>');
             var xRuler=newLayer.children('.x-ruler:last');
             var yRuler=newLayer.children('.y-ruler:last');

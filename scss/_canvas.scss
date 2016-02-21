@@ -1,13 +1,14 @@
-$ruler-width:24px;
-
 .svgdraw-setinto-canvas{
-  @include borderbox;position:relative;width:80%;height:80%;display:block;margin:auto;border:solid 1px #C5C5C5;
-  .svgdraw-layers{@include borderbox;display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
+  @include borderbox;position:relative;width:80%;height:80%;display:block;margin:auto;border:solid 1px #424242; 
+  .svgdraw-layers{@include borderbox;display:block;position:absolute;left:0;top:$canvas-controls-height;right:0;bottom:0;margin:auto;}
   .svgdraw-layer{@include borderbox;display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
   .view{@include borderbox;display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
   .x-ruler,.y-ruler{@include borderbox;display:block;position:absolute;background-color:#EAEAEA;}
-  .x-ruler{height:$ruler-width;border-left:solid $ruler-width transparent;top:0;width:100%;}
-  .y-ruler{width:$ruler-width;border-top:solid $ruler-width transparent;left:0;height:100%;}
-  .workspace{@include borderbox;border:solid $ruler-width transparent;border-bottom:none;border-right:none;overflow:hidden;display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
+  .x-ruler{height:$canvas-ruler-width;border-left:solid $canvas-ruler-width transparent;top:0;width:100%;}
+  .y-ruler{width:$canvas-ruler-width;border-top:solid $canvas-ruler-width transparent;left:0;height:100%;}
+  .workspace{@include borderbox;border:solid $canvas-ruler-width transparent;border-bottom:none;border-right:none;overflow:hidden;display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
   canvas{display:block;position:absolute;left:0;top:0;width:100%;height:100%;}
+
+  &[tool="point"] canvas{cursor:crosshair;}
+  &[tool="select"] canvas{cursor:pointer;cursor:hand;}
 }
